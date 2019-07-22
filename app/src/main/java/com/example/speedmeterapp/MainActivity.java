@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         static ProgressDialog locate;
         static int p = 0;
         static TextView speed;
-        static int velocidade;
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
             checkGps();
             startGps();
 
-            speed = (TextView) findViewById(R.id.speedtext);
-            image = (ImageView) findViewById(R.id.image);
+            speed = findViewById(R.id.speedtext);
+            image = findViewById(R.id.image);
             digitSpeedView = findViewById(R.id.digitSpeedView);
 
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 locate = new ProgressDialog(MainActivity.this);
                 locate.setIndeterminate(true);
                 locate.setCancelable(false);
-                locate.setMessage("Getting Location...");
+                locate.setMessage("Recebendo dados de sua localização");
                 locate.show();
             }
         private void stopGps () {
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void showGPSDisabledAlertToUser () {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setMessage("Deseja Ativar o GPS, para usar a aplicação ?")
+                alertDialogBuilder.setMessage("Deseja Ativar o GPS ?")
                         .setCancelable(false)
                         .setPositiveButton("Ativar GPS",
                                 new DialogInterface.OnClickListener() {

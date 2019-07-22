@@ -12,20 +12,20 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
 import java.text.DecimalFormat;
-import java.util.concurrent.TimeUnit;
- 
+
 public class LocationService extends Service implements LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
  
-    private static final long INTERVAL = 0;
-    private static final long FASTEST_INTERVAL = 0;
+    private static final long INTERVAL = 500;
+    private static final long FASTEST_INTERVAL = 500;
     private LocationRequest LocationRequest;
     private GoogleApiClient GoogleApiClient;
-    private Location CurrentLocation, lStart, lEnd;
-    static double distance = 0;
-    double speed;
+    private Location location, pontoA, pontoB;
+    static double distancia = 0;
+    double velocidade;
 
-    private final IBinder mBinder = new LocalBinder();
+    private final IBinder binder = new LocalBinder();
  
     @Nullable
     @Override
@@ -37,7 +37,7 @@ public class LocationService extends Service implements LocationListener,GoogleA
                 .addOnConnectionFailedListener(this)
                 .build();
         GoogleApiClient.connect();
-        return mBinder;
+        return binder;
     }
  
     protected void createLocationRequest() {
@@ -67,20 +67,21 @@ public class LocationService extends Service implements LocationListener,GoogleA
     @Override
     public void onLocationChanged(Location location) {
         MainActivity.locate.dismiss();
-        CurrentLocation = location;
-        if (lStart == null) {
-            lStart = CurrentLocation;
-            lEnd = CurrentLocation;
+        this.location = location;
+        if (pontoA == null) {
+            pontoA = this.location;
+            pontoB = this.location;
         } else
-            lEnd = CurrentLocation;
+            pontoB = this.location;
  
         atualizarUI();
 
-        speed = location.getSpeed() ;
+        velocidade = location.getSpeed() * 18 / 5 ;
      }
  
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
      }
  
     public class LocalBinder extends Binder {
@@ -91,17 +92,17 @@ public class LocationService extends Service implements LocationListener,GoogleA
  
     private void atualizarUI() {
         if (MainActivity.p == 0) {
-            distance = distance + (lStart.distanceTo(lEnd) / 1000.00);
-            if (speed > 1)
-                MainActivity.speed.setText("Sua velocidade" +speed + " km/hr");
-            MainActivity.digitSpeedView.updateSpeed((int) speed);
+            distancia = distancia + (pontoA.distanceTo(pontoB) / 1000.00);
+            if (velocidade > 0)
+                MainActivity.speed.setText("Sua velocidade"+ new DecimalFormat("##,##").format(velocidade)  + " km/hr");
+            MainActivity.digitSpeedView.updateSpeed((int) velocidade);
 
         }
 
             else {
             MainActivity.speed.setText("parado");
 
-            lStart = lEnd;
+            pontoA = pontoB;
         }
          }
 
@@ -109,8 +110,8 @@ public class LocationService extends Service implements LocationListener,GoogleA
     public boolean onUnbind(Intent intent) {
          if (GoogleApiClient.isConnected())
             GoogleApiClient.disconnect();
-        lStart = null;
-        lEnd = null;
+        pontoA = null;
+        pontoB = null;
         return super.onUnbind(intent);
     }
 }
