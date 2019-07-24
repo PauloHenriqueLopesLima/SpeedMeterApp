@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SpeedMeterApp</string>
+    <string name="permissoes">Permissões dadas com sucesso!!!</string>
 </resources>
